@@ -10,7 +10,7 @@ import java.util.List;
 public class CourseController {
 
 
-    @RequestMapping
+    @RequestMapping("/courses")
     public List<Course> retieveAllCourses(){
         return Arrays.asList(
                 new Course(1,"Curso primero", "Creator: RubénM")
