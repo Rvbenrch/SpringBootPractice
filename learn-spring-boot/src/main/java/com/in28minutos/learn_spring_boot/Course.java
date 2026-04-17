@@ -34,4 +34,6 @@ public class Course {
         this.name = name;
         this.autor = autor;
     }
+    public Course() {
+    }
 }
