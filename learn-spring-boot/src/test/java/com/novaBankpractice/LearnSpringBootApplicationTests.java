@@ -1,4 +1,4 @@
-package com.in28minutos.learn_spring_boot;
+package com.novaBankpractice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
