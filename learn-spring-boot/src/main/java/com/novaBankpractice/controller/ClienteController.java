@@ -1,29 +1,26 @@
 package com.novaBankpractice.controller;
 
 import com.novaBankpractice.model.Cliente;
-import com.novaBankpractice.repository.ClienteRepository;
+import com.novaBankpractice.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/clientes") // Todas las rutas de esta clase empezarán por aquí
+@RequestMapping("/api/clientes")
 public class ClienteController {
 
     @Autowired
-    private ClienteRepository clienteRepository; // Inyección de dependencias
+    private ClienteService clienteService; // ¡Cambio clave! Ahora usamos el Service
 
-    // 1. GET: Listar todos los clientes (Prueba esto primero en Postman)
     @GetMapping
     public List<Cliente> listarClientes() {
-        return clienteRepository.findAll();
+        return clienteService.listarTodos(); // Llamamos al Service
     }
 
-    // 2. POST: Crear un nuevo cliente desde Postman
     @PostMapping
     public Cliente crearCliente(@RequestBody Cliente cliente) {
-
-        return clienteRepository.save(cliente);
+        return clienteService.crearCliente(cliente); // Llamamos al Service
     }
 }

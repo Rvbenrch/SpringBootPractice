@@ -33,7 +33,12 @@ public class Cliente {
     public Cliente() {
         this.fechaCreacion = LocalDateTime.now();
     }
-
+    @PrePersist
+    protected void onCreate() {
+        if (this.fechaCreacion == null) {
+            this.fechaCreacion = LocalDateTime.now();
+        }
+    }
     // --- GETTERS Y SETTERS ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
