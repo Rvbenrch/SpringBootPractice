@@ -25,4 +25,9 @@ public class MovimientoController {
     public Movimiento registrarMovimiento(@RequestBody Movimiento movimiento) {
         return movimientoService.registrarMovimiento(movimiento);
     }
+    @PostMapping("/transferencia")
+    public String transferencia(@RequestParam Long idOrigen, @RequestParam Long idDestino, @RequestParam Double cantidad) {
+        movimientoService.realizarTransferencia(idOrigen, idDestino, cantidad);
+        return "Transferencia completada";
+    }
 }

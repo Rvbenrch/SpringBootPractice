@@ -15,8 +15,9 @@ public class OperacionStrategyFactory {
 
     public OperacionStrategy getStrategy(TipoMovimiento tipo) {
         return switch (tipo) {
-            case DEPOSITO -> ingresoStrategy;
-            case RETIRO -> retiradaStrategy;
+            case DEPOSITO, TRANSFERENCIA_ENTRANTE -> ingresoStrategy;
+            case RETIRO, TRANSFERENCIA_SALIENTE -> retiradaStrategy;
+
             default -> throw new IllegalArgumentException("Tipo de movimiento no soportado: " + tipo);
         };
     }

@@ -47,4 +47,32 @@ public class MovimientoService {
 
         return movimientoRepository.save(movimiento);
     }
+
+    @org.springframework.transaction.annotation.Transactional
+    public void realizarTransferencia(Long idOrigen, Long idDestino, Double cantidad) {
+        Cuenta origen = cuentaRepository.findById(idOrigen)
+                .orElseThrow(() -> new RuntimeException("Cuenta origen no existe"));
+        Cuenta destino = cuentaRepository.findById(idDestino)
+                .orElseThrow(() -> new RuntimeException("Cuenta destino no existe"));
+
+        // Aplicar estrategias
+        strategyFactory.getStrategy(TipoMovimiento.TRANSFERENCIA_SALIENTE).ejecutar(origen, cantidad);
+        strategyFactory.getStrategy(TipoMovimiento.TRANSFERENCIA_ENTRANTE).ejecutar(destino, cantidad);
+
+        // Crear apuntes en el historial
+        registrarMovimientoSimple(origen, cantidad, TipoMovimiento.TRANSFERENCIA_SALIENTE);
+        registrarMovimientoSimple(destino, cantidad, TipoMovimiento.TRANSFERENCIA_ENTRANTE);
+
+        cuentaRepository.save(origen);
+        cuentaRepository.save(destino);
+    }
+
+
+    private void registrarMovimientoSimple(Cuenta cuenta, Double cantidad, TipoMovimiento tipo) {
+        Movimiento mov = new Movimiento();
+        mov.setTipo(tipo);
+        mov.setCantidad(cantidad);
+        mov.setCuenta(cuenta);
+        movimientoRepository.save(mov);
+    }
 }
