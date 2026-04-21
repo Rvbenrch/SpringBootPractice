@@ -1,7 +1,9 @@
 package com.novaBankpractice.service.strategy;
 
 import com.novaBankpractice.model.Cuenta;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RetiradaStrategy implements OperacionStrategy {
     @Override
     public void ejecutar(Cuenta cuenta, double cantidad) {

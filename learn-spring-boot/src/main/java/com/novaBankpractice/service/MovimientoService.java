@@ -5,9 +5,7 @@ import com.novaBankpractice.model.Movimiento;
 import com.novaBankpractice.model.TipoMovimiento;
 import com.novaBankpractice.repository.CuentaRepository;
 import com.novaBankpractice.repository.MovimientoRepository;
-import com.novaBankpractice.service.strategy.IngresoStrategy;
-import com.novaBankpractice.service.strategy.OperacionContext;
-import com.novaBankpractice.service.strategy.RetiradaStrategy;
+import com.novaBankpractice.service.strategy.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +19,10 @@ public class MovimientoService {
 
     @Autowired
     private CuentaRepository cuentaRepository;
+    @Autowired
+    private OperacionStrategyFactory strategyFactory;
 
-    // Cumpliendo con el "listado por cuenta" de tu Caso Práctico 2
+
     public List<Movimiento> listarMovimientosPorCuenta(Long cuentaId) {
         return movimientoRepository.findByCuentaId(cuentaId);
     }
@@ -33,20 +33,14 @@ public class MovimientoService {
         Cuenta cuentaReal = cuentaRepository.findById(idCuenta)
                 .orElseThrow(() -> new RuntimeException("Error: La cuenta con ID " + idCuenta + " no existe."));
 
-        // --- USO DEL PATRÓN STRATEGY ---
+        OperacionStrategy strategy = strategyFactory.getStrategy(movimiento.getTipo());
         OperacionContext context = new OperacionContext();
+        context.setStrategy(strategy);
+        context.ejecutar(cuentaReal,movimiento.getCantidad());
 
-        if (movimiento.getTipo() == com.novaBankpractice.model.TipoMovimiento.DEPOSITO) {
-            context.setStrategy(new IngresoStrategy());
-        } else if (movimiento.getTipo() == com.novaBankpractice.model.TipoMovimiento.RETIRO) {
-            context.setStrategy(new RetiradaStrategy());
-        } else {
-            throw new RuntimeException("Operación no soportada todavía.");
-        }
 
-        // El contexto ejecuta la estrategia elegida y actualiza el saldo de cuentaReal
         context.ejecutar(cuentaReal, movimiento.getCantidad());
-        // --------------------------------
+
 
         movimiento.setCuenta(cuentaReal);
         cuentaRepository.save(cuentaReal);
