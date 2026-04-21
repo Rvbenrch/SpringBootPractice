@@ -1,5 +1,6 @@
 package com.novaBankpractice.controller;
 
+import com.novaBankpractice.dto.TransferenciaDTO;
 import com.novaBankpractice.model.Movimiento;
 import com.novaBankpractice.service.MovimientoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,12 @@ public class MovimientoController {
         return movimientoService.registrarMovimiento(movimiento);
     }
     @PostMapping("/transferencia")
-    public String transferencia(@RequestParam Long idOrigen, @RequestParam Long idDestino, @RequestParam Double cantidad) {
-        movimientoService.realizarTransferencia(idOrigen, idDestino, cantidad);
-        return "Transferencia completada";
+    public String realizarTransferencia(@RequestBody TransferenciaDTO datos) {
+        movimientoService.realizarTransferencia(
+                datos.getIdOrigen(),
+                datos.getIdDestino(),
+                datos.getCantidad()
+        );
+        return "Transferencia de " + datos.getCantidad() + "€ realizada con éxito.";
     }
 }
