@@ -12,15 +12,25 @@ import java.util.List;
 public class ClienteController {
 
     @Autowired
-    private ClienteService clienteService; // ¡Cambio clave! Ahora usamos el Service
+    private ClienteService clienteService;
 
     @GetMapping
     public List<Cliente> listarClientes() {
-        return clienteService.listarTodos(); // Llamamos al Service
+        return clienteService.listarTodos();
     }
 
     @PostMapping
     public Cliente crearCliente(@RequestBody Cliente cliente) {
-        return clienteService.crearCliente(cliente); // Llamamos al Service
+        return clienteService.crearCliente(cliente);
+    }
+
+    @GetMapping("/{id}")
+    public Cliente buscarPorId(@PathVariable Long id) {
+        return clienteService.buscarPorId(id);
+    }
+
+    @GetMapping("/dni/{dni}")
+    public Cliente buscarPorDni(@PathVariable String dni) {
+        return clienteService.buscarPorDni(dni);
     }
 }

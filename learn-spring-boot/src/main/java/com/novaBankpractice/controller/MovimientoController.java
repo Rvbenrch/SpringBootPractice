@@ -15,13 +15,13 @@ public class MovimientoController {
     @Autowired
     private MovimientoService movimientoService;
 
-    // Equivalente a tu opción "Historial de movimientos"
+
     @GetMapping("/cuenta/{cuentaId}")
     public List<Movimiento> listarMovimientosCuenta(@PathVariable Long cuentaId) {
         return movimientoService.listarMovimientosPorCuenta(cuentaId);
     }
 
-    // Equivalente a tus opciones de ingresar/retirar/transferir
+
     @PostMapping
     public Movimiento registrarMovimiento(@RequestBody Movimiento movimiento) {
         return movimientoService.registrarMovimiento(movimiento);

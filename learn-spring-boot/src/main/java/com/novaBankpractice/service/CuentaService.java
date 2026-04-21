@@ -23,19 +23,17 @@ public class CuentaService {
         return cuentaRepository.findAll();
     }
 
-    public Cuenta crearCuenta(Cuenta cuenta) {
-        // 1. Extraemos el ID del cliente que nos llega desde Postman
-        Long idCliente = cuenta.getCliente().getId();
+    public Cuenta crearCuenta(Long clienteId, String numeroCuenta) {
 
-        // 2. Buscamos al cliente REAL en la base de datos
-        // (Si no existe, lanzamos un error que más adelante controlaremos)
-        Cliente clienteReal = clienteRepository.findById(idCliente)
-                .orElseThrow(() -> new RuntimeException("Error: El cliente con ID " + idCliente + " no existe."));
+        Cliente cliente = clienteRepository.findById(clienteId)
+                .orElseThrow(() -> new RuntimeException("Error: El cliente con ID " + clienteId + " no existe."));
 
-        // 3. Le asignamos este cliente real y completo a la cuenta
-        cuenta.setCliente(clienteReal);
 
-        // 4. Ahora sí, guardamos la cuenta de forma segura
+        Cuenta cuenta = new Cuenta();
+        cuenta.setCliente(cliente);
+        cuenta.setNumeroCuenta(numeroCuenta);
+        cuenta.setSaldo(0.0);
+
         return cuentaRepository.save(cuenta);
     }
 }
