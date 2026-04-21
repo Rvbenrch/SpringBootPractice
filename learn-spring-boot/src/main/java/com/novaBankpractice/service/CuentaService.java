@@ -23,17 +23,33 @@ public class CuentaService {
         return cuentaRepository.findAll();
     }
 
-    public Cuenta crearCuenta(Long clienteId, String numeroCuenta) {
+    public Cuenta crearCuenta(Long clienteId) {
 
         Cliente cliente = clienteRepository.findById(clienteId)
                 .orElseThrow(() -> new RuntimeException("Error: El cliente con ID " + clienteId + " no existe."));
 
-
         Cuenta cuenta = new Cuenta();
         cuenta.setCliente(cliente);
-        cuenta.setNumeroCuenta(numeroCuenta);
+        cuenta.setNumeroCuenta(generarNumeroCuentaUnico());
         cuenta.setSaldo(0.0);
 
         return cuentaRepository.save(cuenta);
+    }
+
+    private String generarNumeroCuentaUnico() {
+        String nuevoNumero;
+        boolean existe;
+        do {
+            // Generamos un número ficticio, por ejemplo: ES + 20 dígitos aleatorios
+            StringBuilder sb = new StringBuilder("ES");
+            for (int i = 0; i < 20; i++) {
+                sb.append((int) (Math.random() * 10));
+            }
+            nuevoNumero = sb.toString();
+            // Verificamos que no exista ya en la base de datos
+            existe = cuentaRepository.findByNumeroCuenta(nuevoNumero).isPresent();
+        } while (existe);
+        
+        return nuevoNumero;
     }
 }

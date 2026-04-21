@@ -9,6 +9,7 @@ import com.novaBankpractice.service.strategy.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -27,24 +28,28 @@ public class MovimientoService {
         return movimientoRepository.findByCuentaId(cuentaId);
     }
 
+    public List<Movimiento> listarMovimientosPorRangoFechas(Long cuentaId, LocalDateTime inicio, LocalDateTime fin) {
+        return movimientoRepository.findByCuentaIdAndFechaBetween(cuentaId, inicio, fin);
+    }
+
     public Movimiento registrarMovimiento(Movimiento movimiento) {
         Long idCuenta = movimiento.getCuenta().getId();
 
         Cuenta cuentaReal = cuentaRepository.findById(idCuenta)
                 .orElseThrow(() -> new RuntimeException("Error: La cuenta con ID " + idCuenta + " no existe."));
 
+        // Ejecutar la estrategia según el tipo de movimiento
         OperacionStrategy strategy = strategyFactory.getStrategy(movimiento.getTipo());
-        OperacionContext context = new OperacionContext();
-        context.setStrategy(strategy);
-        context.ejecutar(cuentaReal,movimiento.getCantidad());
+        strategy.ejecutar(cuentaReal, movimiento.getCantidad());
 
-
-        context.ejecutar(cuentaReal, movimiento.getCantidad());
-
-
-        movimiento.setCuenta(cuentaReal);
+        // Guardar la cuenta con el nuevo saldo
         cuentaRepository.save(cuentaReal);
 
+        // Guardar el movimiento con la fecha actual si no la tiene
+        if (movimiento.getFecha() == null) {
+            movimiento.setFecha(LocalDateTime.now());
+        }
+        movimiento.setCuenta(cuentaReal);
         return movimientoRepository.save(movimiento);
     }
 
@@ -55,24 +60,23 @@ public class MovimientoService {
         Cuenta destino = cuentaRepository.findById(idDestino)
                 .orElseThrow(() -> new RuntimeException("Cuenta destino no existe"));
 
-        // Aplicar estrategias
-        strategyFactory.getStrategy(TipoMovimiento.TRANSFERENCIA_SALIENTE).ejecutar(origen, cantidad);
-        strategyFactory.getStrategy(TipoMovimiento.TRANSFERENCIA_ENTRANTE).ejecutar(destino, cantidad);
+        // 1. Registrar el movimiento de salida
+        Movimiento movSalida = new Movimiento();
+        movSalida.setCuenta(origen);
+        movSalida.setCantidad(cantidad);
+        movSalida.setTipo(TipoMovimiento.TRANSFERENCIA_SALIENTE);
+        movSalida.setDescripcion("Transferencia enviada a cuenta " + destino.getNumeroCuenta());
+        registrarMovimiento(movSalida);
 
-        // Crear apuntes en el historial
-        registrarMovimientoSimple(origen, cantidad, TipoMovimiento.TRANSFERENCIA_SALIENTE);
-        registrarMovimientoSimple(destino, cantidad, TipoMovimiento.TRANSFERENCIA_ENTRANTE);
-
-        cuentaRepository.save(origen);
-        cuentaRepository.save(destino);
+        // 2. Registrar el movimiento de entrada
+        Movimiento movEntrada = new Movimiento();
+        movEntrada.setCuenta(destino);
+        movEntrada.setCantidad(cantidad);
+        movEntrada.setTipo(TipoMovimiento.TRANSFERENCIA_ENTRANTE);
+        movEntrada.setDescripcion("Transferencia recibida de cuenta " + origen.getNumeroCuenta());
+        registrarMovimiento(movEntrada);
     }
 
+    // Eliminamos el método registrarMovimientoSimple ya que ahora usamos registrarMovimiento
 
-    private void registrarMovimientoSimple(Cuenta cuenta, Double cantidad, TipoMovimiento tipo) {
-        Movimiento mov = new Movimiento();
-        mov.setTipo(tipo);
-        mov.setCantidad(cantidad);
-        mov.setCuenta(cuenta);
-        movimientoRepository.save(mov);
-    }
 }

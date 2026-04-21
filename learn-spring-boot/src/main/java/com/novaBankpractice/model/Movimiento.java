@@ -18,6 +18,9 @@ public class Movimiento {
     @Column(nullable = false)
     private Double cantidad;
 
+    @Column(length = 255)
+    private String descripcion;
+
     @Column(name = "fecha", updatable = false)
     private LocalDateTime fecha;
 
@@ -42,6 +45,8 @@ public class Movimiento {
     public void setTipo(TipoMovimiento tipo) { this.tipo = tipo; }
     public Double getCantidad() { return cantidad; }
     public void setCantidad(Double cantidad) { this.cantidad = cantidad; }
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
     public LocalDateTime getFecha() { return fecha; }
     public void setFecha(LocalDateTime fecha) { this.fecha = fecha; }
     public Cuenta getCuenta() { return cuenta; }

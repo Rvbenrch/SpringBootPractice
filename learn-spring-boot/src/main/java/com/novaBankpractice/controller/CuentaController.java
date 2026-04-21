@@ -26,8 +26,8 @@ public class CuentaController {
                 .orElseThrow(() -> new RuntimeException("Cuenta " + numero + " no encontrada."));
     }
 
-    @PostMapping
-    public Cuenta crearCuenta(@RequestBody Cuenta cuenta) {
-        return cuentaService.crearCuenta(cuenta);
+    @PostMapping("/cliente/{clienteId}")
+    public Cuenta crearCuenta(@PathVariable Long clienteId) {
+        return cuentaService.crearCuenta(clienteId);
     }
 }
