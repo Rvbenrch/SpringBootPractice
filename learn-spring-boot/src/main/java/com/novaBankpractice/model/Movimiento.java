@@ -1,8 +1,15 @@
 package com.novaBankpractice.model;
-
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "movimientos")
 public class Movimiento {
@@ -11,25 +18,19 @@ public class Movimiento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING) // Guarda el texto (ej: "DEPOSITO") en PostgreSQL
-    @Column(nullable = false, length = 50)
+    @ManyToOne(optional = false) // Muchos movimientos pertenecen a una Cuenta
+    @JoinColumn(name = "cuenta_id", nullable = false)
+    private Cuenta cuenta;
+
+    @Enumerated(EnumType.STRING) // Guarda el enum como Texto en la base de datos (ej. "DEPOSITO")
+    @Column(nullable = false)
     private TipoMovimiento tipo;
 
     @Column(nullable = false)
     private Double cantidad;
 
-    @Column(length = 255)
-    private String descripcion;
-
-    @Column(name = "fecha", updatable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime fecha;
-
-    // --- LA RELACIÓN CON LA CUENTA ---
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "cuenta_id", nullable = false)
-    private Cuenta cuenta;
-
-    public Movimiento() {}
 
     @PrePersist
     protected void onCreate() {
@@ -37,18 +38,4 @@ public class Movimiento {
             this.fecha = LocalDateTime.now();
         }
     }
-
-    // --- GETTERS Y SETTERS ---
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public TipoMovimiento getTipo() { return tipo; }
-    public void setTipo(TipoMovimiento tipo) { this.tipo = tipo; }
-    public Double getCantidad() { return cantidad; }
-    public void setCantidad(Double cantidad) { this.cantidad = cantidad; }
-    public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
-    public LocalDateTime getFecha() { return fecha; }
-    public void setFecha(LocalDateTime fecha) { this.fecha = fecha; }
-    public Cuenta getCuenta() { return cuenta; }
-    public void setCuenta(Cuenta cuenta) { this.cuenta = cuenta; }
 }

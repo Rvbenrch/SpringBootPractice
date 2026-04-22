@@ -1,14 +1,22 @@
 package com.novaBankpractice.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
+@Data // Genera automáticamente todos los Getters, Setters, toString, equals y hashCode.
+@Builder // Implementa automáticamente el Patrón Builder que hiciste a mano en CP2.
+@NoArgsConstructor // Genera un constructor vacío (obligatorio para que funcione @Entity y JPA).
+@AllArgsConstructor // Genera un constructor con todos los atributos (necesario para el Builder).
 @Entity
-@Table(name = "clientes") // Conecta con la tabla de tu schema.sql
+@Table(name = "clientes")
 public class Cliente {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // El SERIAL autogenerado
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, length = 100)
@@ -29,57 +37,10 @@ public class Cliente {
     @Column(name = "fecha_creacion", updatable = false)
     private LocalDateTime fechaCreacion;
 
-    // Constructor vacío obligatorio para que JPA pueda mapear los datos
-    public Cliente() {
-        this.fechaCreacion = LocalDateTime.now();
-    }
     @PrePersist
     protected void onCreate() {
         if (this.fechaCreacion == null) {
             this.fechaCreacion = LocalDateTime.now();
-        }
-    }
-    // --- GETTERS Y SETTERS ---
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
-    public String getApellidos() { return apellidos; }
-    public void setApellidos(String apellidos) { this.apellidos = apellidos; }
-    public String getDni() { return dni; }
-    public void setDni(String dni) { this.dni = dni; }
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-    public String getTelefono() { return telefono; }
-    public void setTelefono(String telefono) { this.telefono = telefono; }
-    public LocalDateTime getFechaCreacion() { return fechaCreacion; }
-    public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }
-
-    // --- PATRÓN BUILDER (Mantenemos tu diseño del CP2) ---
-    public static class Builder {
-        private Long id;
-        private String nombre;
-        private String apellidos;
-        private String dni;
-        private String email;
-        private String telefono;
-
-        public Builder id(Long id) { this.id = id; return this; }
-        public Builder nombre(String nombre) { this.nombre = nombre; return this; }
-        public Builder apellidos(String apellidos) { this.apellidos = apellidos; return this; }
-        public Builder dni(String dni) { this.dni = dni; return this; }
-        public Builder email(String email) { this.email = email; return this; }
-        public Builder telefono(String telefono) { this.telefono = telefono; return this; }
-
-        public Cliente build() {
-            Cliente cliente = new Cliente();
-            cliente.setId(this.id);
-            cliente.setNombre(this.nombre);
-            cliente.setApellidos(this.apellidos);
-            cliente.setDni(this.dni);
-            cliente.setEmail(this.email);
-            cliente.setTelefono(this.telefono);
-            return cliente;
         }
     }
 }

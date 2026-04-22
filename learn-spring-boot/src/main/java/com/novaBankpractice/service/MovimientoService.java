@@ -1,8 +1,6 @@
 package com.novaBankpractice.service;
 
-import com.novaBankpractice.model.Cuenta;
-import com.novaBankpractice.model.Movimiento;
-import com.novaBankpractice.model.TipoMovimiento;
+import com.novaBankpractice.model.*;
 import com.novaBankpractice.repository.CuentaRepository;
 import com.novaBankpractice.repository.MovimientoRepository;
 import com.novaBankpractice.service.strategy.*;
@@ -65,7 +63,6 @@ public class MovimientoService {
         movSalida.setCuenta(origen);
         movSalida.setCantidad(cantidad);
         movSalida.setTipo(TipoMovimiento.TRANSFERENCIA_SALIENTE);
-        movSalida.setDescripcion("Transferencia enviada a cuenta " + destino.getNumeroCuenta());
         registrarMovimiento(movSalida);
 
         // 2. Registrar el movimiento de entrada
@@ -73,7 +70,6 @@ public class MovimientoService {
         movEntrada.setCuenta(destino);
         movEntrada.setCantidad(cantidad);
         movEntrada.setTipo(TipoMovimiento.TRANSFERENCIA_ENTRANTE);
-        movEntrada.setDescripcion("Transferencia recibida de cuenta " + origen.getNumeroCuenta());
         registrarMovimiento(movEntrada);
     }
 
