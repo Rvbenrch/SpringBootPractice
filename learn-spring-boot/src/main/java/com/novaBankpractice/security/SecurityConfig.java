@@ -8,7 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.userdetails.User;
@@ -42,16 +42,23 @@ public class SecurityConfig {
 
         return http.build();
     }
+    // 2. Inyectamos los valores del properties
+    @Value("${api.security.admin.username}")
+    private String adminUsername;
+
+    @Value("${api.security.admin.password}")
+    private String adminPassword;
+
+    // 3. Modificamos el Bean para usar las variables inyectadas
     @Bean
     public UserDetailsService userDetailsService() {
         UserDetails admin = User.builder()
-                .username("****")
-                .password("***************") // Usuario y Contraseña no disponibles
+                .username(adminUsername)
+                .password("{noop}" + adminPassword) // Mantenemos {noop} para texto plano
                 .roles("ADMIN")
                 .build();
         return new InMemoryUserDetailsManager(admin);
     }
-
     // 2. Activamos el Gestor de Autenticación de Spring
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
