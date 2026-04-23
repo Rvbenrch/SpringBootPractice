@@ -22,6 +22,10 @@ public class CuentaService {
     public List<Cuenta> listarCuentas() {
         return cuentaRepository.findAll();
     }
+    public Cuenta buscarPorNumero(String numero) {
+        return cuentaRepository.findByNumeroCuenta(numero)
+                .orElseThrow(() -> new RuntimeException("Error: La cuenta con número " + numero + " no existe."));
+    }
 
     public Cuenta crearCuenta(Long clienteId) {
 

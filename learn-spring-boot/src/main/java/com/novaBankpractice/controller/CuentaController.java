@@ -5,7 +5,6 @@ import com.novaBankpractice.service.CuentaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import com.novaBankpractice.repository.*;
 
 @RestController
 @RequestMapping("/api/cuentas")
@@ -14,16 +13,15 @@ public class CuentaController {
     @Autowired
     private CuentaService cuentaService;
 
-    @Autowired
-    private CuentaRepository cuentaRepository;
     @GetMapping
     public List<Cuenta> listarCuentas() {
         return cuentaService.listarCuentas();
     }
+
     @GetMapping("/numero/{numero}")
     public Cuenta buscarPorNumero(@PathVariable String numero) {
-        return cuentaRepository.findByNumeroCuenta(numero)
-                .orElseThrow(() -> new RuntimeException("Cuenta " + numero + " no encontrada."));
+        // Toda la lógica y manejo de errores se delega al Servicio
+        return cuentaService.buscarPorNumero(numero);
     }
 
     @PostMapping("/cliente/{clienteId}")
