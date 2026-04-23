@@ -45,8 +45,8 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         UserDetails admin = User.builder()
-                .username("admin")
-                .password("{noop}admin123") // {noop} significa que no encriptamos la clave para este ejemplo
+                .username("****")
+                .password("***************") // Usuario y Contraseña no disponibles
                 .roles("ADMIN")
                 .build();
         return new InMemoryUserDetailsManager(admin);
