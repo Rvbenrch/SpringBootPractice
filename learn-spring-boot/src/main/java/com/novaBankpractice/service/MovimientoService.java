@@ -73,6 +73,5 @@ public class MovimientoService {
         registrarMovimiento(movEntrada);
     }
 
-    // Eliminamos el método registrarMovimientoSimple ya que ahora usamos registrarMovimiento
 
 }

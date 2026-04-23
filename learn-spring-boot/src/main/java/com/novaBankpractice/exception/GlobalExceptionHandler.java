@@ -10,18 +10,12 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
-
-        // Creamos nuestro objeto de error usando el constructor generado por Lombok
         ErrorResponse error = new ErrorResponse(
                 ex.getMessage(), // Aquí irá el texto "Saldo insuficiente."
                 LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST.value() // Devuelve un código 400
-        );
-
-        // Lo enviamos a Postman en formato JSON
+                HttpStatus.BAD_REQUEST.value());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 }
